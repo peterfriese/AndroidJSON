@@ -20,5 +20,10 @@ public class Trend {
 	public String getUrl() {
 		return url;
 	}
+	
+	@Override
+	public String toString() {
+		return name;
+	}
 
 }

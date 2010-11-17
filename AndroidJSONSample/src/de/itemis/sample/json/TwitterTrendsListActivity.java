@@ -9,10 +9,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import com.google.gson.Gson;
-
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+
+import com.google.gson.Gson;
 
 public class TwitterTrendsListActivity extends ListActivity {
 	
@@ -20,7 +21,9 @@ public class TwitterTrendsListActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        readData();
+        List<Trend> trends = readData();
+        TrendsAdapter trendsAdapter = new TrendsAdapter(this, android.R.layout.simple_list_item_1, trends);
+        setListAdapter(trendsAdapter);
     }
     
     private InputStream getJSONData(String url) {
@@ -38,14 +41,11 @@ public class TwitterTrendsListActivity extends ListActivity {
 		return data;
     }
     
-    private void readData() {
+    private List<Trend> readData() {
     	InputStreamReader reader = new InputStreamReader(getJSONData("http://search.twitter.com/trends.json"));
     	Gson gson = new Gson();
     	Trends trends = gson.fromJson(reader, Trends.class);
-    	List<Trend> trends2 = trends.getTrends();
-    	for (Trend trend : trends2) {
-			System.out.println("Trend: " + trend.getName() + ": " + trend.getUrl());
-		}
+    	return trends.getTrends();
     }
     
     
