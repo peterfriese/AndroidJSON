@@ -10,8 +10,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.ListActivity;
+import android.content.ContentResolver;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
+import android.widget.SimpleAdapter;
+import android.widget.SimpleCursorAdapter;
 
 import com.google.gson.Gson;
 
@@ -21,9 +27,19 @@ public class TwitterTrendsListActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        List<Trend> trends = readData();
-        TrendsAdapter trendsAdapter = new TrendsAdapter(this, android.R.layout.simple_list_item_1, trends);
+        
+        ContentResolver cr = getContentResolver();
+        Cursor cursor = cr.query(TwitterTrendsContentProvider.CONTENT_URI, null, null, null, null);
+        
+        SimpleCursorAdapter trendsAdapter = new SimpleCursorAdapter(
+        		this, 
+        		android.R.layout.simple_list_item_1, cursor, 
+        		new String[] {"name", "url"}, 
+        		new int[]{android.R.id.text1, android.R.id.text2});
         setListAdapter(trendsAdapter);
+//        List<Trend> trends = readData();
+//        TrendsAdapter trendsAdapter = new TrendsAdapter(this, android.R.layout.simple_list_item_1, trends);
+//        setListAdapter(trendsAdapter);
     }
     
     private InputStream getJSONData(String url) {
